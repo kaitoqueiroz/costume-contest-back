@@ -1,0 +1,31 @@
+version: '2'
+
+volumes:
+  mysql-data:
+    driver: local
+
+services:
+  # PHP (with Apache)
+  app:
+    image: ambientum/php:7.2-nginx
+    container_name: app
+    volumes:
+        - ${APP_PATH}:/var/www/app
+    ports:
+        - "${APP_PORT}:8080"
+    links:
+        - mysql
+
+  # MySQL (5.7)
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    volumes:
+        - mysql-data:/var/lib/mysql
+    ports:
+        - "${DB_PORT}:3306"
+    environment:
+        - MYSQL_DATABASE=${DB_DATABASE}
+        - MYSQL_USER=${DB_USERNAME}
+        - MYSQL_PASSWORD=${DB_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
